@@ -8,6 +8,7 @@ from enum import Enum
 import itertools
 from collections import deque, defaultdict
 import logging
+import copy
 
 
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +57,22 @@ class IntcodeComputer:
         self.get_input = get_input
         self.pos = 0
         self.relative_base = 0
+
+    def save(self):
+        return [
+            copy.deepcopy(self.program),
+            self.get_input,
+            self.pos,
+            self.relative_base
+        ]
+
+    @staticmethod
+    def load(program, get_input, pos, relative_base):
+        computer = IntcodeComputer([], get_input)
+        computer.program = program
+        computer.pos = pos
+        computer.relative_base = relative_base
+        return computer
 
     def _get_value(self, pos: int, mode: int) -> int:
         if mode == 0:
@@ -214,53 +231,101 @@ ANTI_DIRECTIONS = [Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.W
 DELTAS = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
 
-def find_oxygen() -> int:
+def find_oxygen() -> IntcodeComputer:
     """
     return the length of the shortest path to the oxygen
     """
     visited = {(0, 0)}
 
+    inputs = deque([])
+    def get_input() -> int:
+        return inputs.popleft()
+
+    computer = IntcodeComputer(PROGRAM, get_input)
+
     frontier = deque([])
-    frontier.append(([], (0, 0)))
-
+    frontier.append((computer.save(), 0, (0, 0)))
+    
     while frontier:
-        inputs = deque([])
-        def get_input() -> int:
-            return inputs.popleft()
-
-        computer = IntcodeComputer(PROGRAM, get_input)
-        path, (x, y) = frontier.popleft()
-
-        print(x, y, len(path))
-
-        for i in path:
-            inputs.append(i)
-            computer.go()
+        save_state, num_steps, (x, y) = frontier.popleft()
+        # print(num_steps, x, y)
+        computer = IntcodeComputer.load(*save_state)
+        # print("pos1", computer.pos, sum(computer.program.values()))
 
         for direction, anti, (dx, dy) in zip(DIRECTIONS, ANTI_DIRECTIONS, DELTAS):
-            #print(direction, anti, dx, dy)
+            # print(direction, anti, dx, dy)
             inputs.append(direction.value)
             status = Status(computer.go())
-            #print("status", status)
+            # print("pos2", computer.pos, sum(computer.program.values()))
+            # print("status", status)
             if status == Status.OXYGEN:
-                return len(path) + 1
+                print("found oxygen after", num_steps + 1, "steps")
+                return computer
             elif status == Status.WALL:
                 pass
             elif status == Status.MOVED:
                 new_loc = (x + dx, y + dy)
-                #print(new_loc, visited)
                 if new_loc not in visited:
-                    new_path = path + [direction.value]
-                    # print("new location", new_loc, new_path)
+                    # print(new_loc, visited)
                     visited.add(new_loc)
-                    frontier.append((new_path, new_loc))
+                    frontier.append((computer.save(), num_steps + 1, new_loc))
                     # move back
                     inputs.append(anti.value)
                     computer.go()
+                    # print("pos3", computer.pos, sum(computer.program.values()))
                 else:
-                    #print("been here")
-                    pass
+                    # print("already been here")
+                    # move back
+                    inputs.append(anti.value)
+                    computer.go()
+                    # print("pos3", computer.pos, sum(computer.program.values()))
             
-print(find_oxygen())
+computer = find_oxygen()
 
+def furthest_point(computer: IntcodeComputer) -> int:
+    visited = {(0, 0)}
 
+    inputs = deque([])
+    def get_input() -> int:
+        return inputs.popleft()
+
+    computer.get_input = get_input
+
+    frontier = deque([])
+    frontier.append((computer.save(), 0, (0, 0)))
+    
+    while frontier:
+        save_state, num_steps, (x, y) = frontier.popleft()
+        print(num_steps, x, y)
+        # print(num_steps, x, y)
+        computer = IntcodeComputer.load(*save_state)
+        # print("pos1", computer.pos, sum(computer.program.values()))
+
+        for direction, anti, (dx, dy) in zip(DIRECTIONS, ANTI_DIRECTIONS, DELTAS):
+            # print(direction, anti, dx, dy)
+            inputs.append(direction.value)
+            status = Status(computer.go())
+            # print("pos2", computer.pos, sum(computer.program.values()))
+            # print("status", status)
+            if status == Status.WALL:
+                pass
+            else:
+                new_loc = (x + dx, y + dy)
+                if new_loc not in visited:
+                    # print(new_loc, visited)
+                    visited.add(new_loc)
+                    frontier.append((computer.save(), num_steps + 1, new_loc))
+                    # move back
+                    inputs.append(anti.value)
+                    computer.go()
+                    # print("pos3", computer.pos, sum(computer.program.values()))
+                else:
+                    # print("already been here")
+                    # move back
+                    inputs.append(anti.value)
+                    computer.go()
+                    # print("pos3", computer.pos, sum(computer.program.values()))
+
+    return num_steps
+
+print(furthest_point(computer))
