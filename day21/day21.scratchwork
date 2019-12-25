@@ -1,0 +1,84 @@
+NOT A J  # set J to "A is a hole"
+NOT B T  # set T to "B is a hole"
+AND T J  # set J to "A is a hole and B is a hole"
+NOT C T  # set T to "C is a hole"
+AND T J  # 
+AND D J
+
+
+.....@...@.......
+....@.@.@.@......
+...J...J...@.....
+#####..#.########
+    ABCD
+        ABCD
+
+
+NOT A J  # set J to "A is a hole"
+NOT B T  # set J to "B is a hole"
+OR T J   # set J to "A is a hole or B is a hole"
+
+
+.................
+.................
+.................
+#####...#########
+
+NOT A J  # set J to "A is a hole"
+NOT B T  # set J to "B is a hole"
+OR T J   # set J to "A is a hole or B is a hole"
+NOT D T  # set T to "D is a hole"
+NOT T T  # set T to "D is not a hole"
+AND T J  # set J to "(~A or ~B) and D"
+
+
+.................
+.................
+@................
+#####.#..########
+   ABCD
+      ABCD
+  
+NOT A J  # set J to "A is a hole"
+NOT B T  # set T to "B is a hole"
+OR T J   # set J to "A is a hole or B is a hole"
+NOT C T  # set T to "C is a hole"
+OR T J   # set J to "A is a hole, or B is a hole, or C is a hole" 
+NOT D T  # set T to "D is a hole"
+NOT T T  # set T to "D is not a hole"
+AND T J  # set J to "(~A or ~B) and D"
+
+
+
+.................
+.................
+......@..........
+#####.#.#..######
+         ABCDEFGHI
+     ABCDEFGHI
+   ABCDEFGHI   
+
+D is solid
+H is solid
+A or B or C or D is not solid
+
+NOT A J  # set J to "A is a hole"
+NOT B T  # set T to "B is a hole"
+OR T J   # set J to "A is a hole or B is a hole"
+NOT C T  # set T to "C is a hole"
+OR T J   # set J to "A is a hole, or B is a hole, or C is a hole" 
+NOT D T  # set T to "D is a hole"
+NOT T T  # set T to "D is not a hole"
+AND T J  # set J to "(~A or ~B) and D"
+NOT H T  # set T to "H is a hole"
+NOT T T  # set T to "H is not a hole"
+AND T J  # set J to 
+
+.................
+.................
+...@.............
+#####...####..###
+     ABCDEFGHI
+            ABCDE
+
+

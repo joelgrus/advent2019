@@ -1,0 +1,57 @@
+#####..#.########
+   JABCD
+       JABCD    
+
+#####...#########
+    JABCD
+
+#####.#..########
+  JABCD
+      JABCD
+
+#####.#.#..######
+    JABCD
+        JABCD
+
+#####...####..###
+    JABCD
+           JABCD
+
+#####.#.#########
+    JABCD
+
+#####.##.##..####
+          JABCD
+      JABCD
+  JABCDEFGHI
+
+#####..#.########
+       JABCD
+   JABCD
+
+not A or (NOT C and D) or (NOT E and D)
+
+-- ~A
+NOT A J
+-- ~C & D
+NOT C T
+AND D T
+OR T J
+
+NOT E T
+AND D T
+OR T J
+
+D AND (NOT A or NOT B or NOT C) AND (E OR H)
+
+NOT A J
+NOT B T
+OR T J
+NOT C T
+OR T J
+AND D J
+OR E T 
+OR H T 
+AND 
+
+
